@@ -14,10 +14,10 @@ It's also an **educational sports game**: it teaches you how to play and covers 
 | Position your foot | **Point the controller**: down = foot close to your body, forward = foot further ahead, up = lift your foot |
 | Kick | A **quick flick** of the wrist from bottom to top (the faster, the harder) |
 | Spin/curve | Move your foot sideways at the moment of contact |
-| Walk | **Touch the touchpad** (walks in the direction you're looking) |
+| Walk | **Touch the touchpad anywhere** (center = forward, edges = that direction); no need to press |
 | Sprint | Hold the **trigger** |
-| Pause | **Click the center** of the touchpad |
-| Turn 45° | **Click the left/right edges** of the touchpad |
+| Pause | **Double-click** the touchpad |
+| Turn | Turn your body/chair, or enable touchpad turning (click left/right edges) in Options |
 | Header | The ball really hits your head, so move your head! |
 | Goalkeeper | Point the controller where you want your gloves; the touchpad moves you along the line |
 

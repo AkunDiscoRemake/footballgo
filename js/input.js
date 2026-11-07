@@ -91,31 +91,45 @@
         I.camera.getWorldPosition(I.ray.origin); I.camera.getWorldDirection(I.ray.dir);
       }
       var gp = I.getGamepad();
-      var trig = false, padPress = false, ax = 0, ay = 0, touched = false;
+      var trig = !!(c && c.userData.select), padPress = false, ax = 0, ay = 0, touched = false;
       if (gp) {
-        var b = gp.buttons;
-        trig = !!(b[0] && b[0].pressed);
-        padPress = !!((b[2] && b[2].pressed) || (b[3] && b[3].pressed && gp.axes.length > 2));
-        var a = gp.axes;
+        var b = gp.buttons, a = gp.axes;
+        // mapeamento: xr-standard = [0 gatilho, 1 grip, 2 touchpad, 3 analógico]
+        // Oculus Go antigo (WebVR / sem mapeamento): [0 touchpad, 1 gatilho]
+        var legacyGo = gp.mapping !== 'xr-standard' && b.length <= 2 && /go/i.test(gp.id || '');
+        var trigB = legacyGo ? b[1] : b[0];
+        var padB = legacyGo ? b[0] : (b[2] || (b.length === 2 ? b[1] : null));
+        trig = trig || !!(trigB && trigB.pressed);
+        padPress = !!(padB && padB.pressed) || !!(b[3] && b[3].pressed && a.length > 2);
         var tx = a[0] || 0, ty = a[1] || 0, sx = a[2] || 0, sy = a[3] || 0;
         if (Math.abs(sx) + Math.abs(sy) > Math.abs(tx) + Math.abs(ty)) { ax = sx; ay = sy; } else { ax = tx; ay = ty; }
-        touched = (b[2] && b[2].touched) || Math.abs(ax) > 0.05 || Math.abs(ay) > 0.05;
-      } else {
-        // sem gamepad (alguns navegadores): só o select
-        trig = !!(c && c.userData.select);
+        touched = !!(padB && (padB.touched || padB.pressed)) || Math.abs(ax) > 0.04 || Math.abs(ay) > 0.04;
+        I.debug = { id: gp.id, mapping: gp.mapping, buttons: b.map(function (x) { return (x.pressed ? 'P' : x.touched ? 't' : '-'); }).join(''), axes: Array.prototype.map.call(a, function (v) { return v.toFixed(2); }).join(' ') };
       }
       I.triggerDown = trig && !I.prevTrig; I.prevTrig = trig; I.trigger = trig;
       var pd = padPress && !I.prevPad; I.prevPad = padPress;
       I.click = I.triggerDown || pd;
       I.padClick = pd;
+      I.padT = (I.padT || 0) + dt;
       if (pd) {
-        if (Math.abs(ax) < 0.45 && Math.abs(ay) < 0.45) I.pause = true;
-        else if (Math.abs(ax) > 0.6 && Math.abs(ay) < 0.6) I.snap = ax > 0 ? -1 : 1;
+        // pausa = clique DUPLO no touchpad (não atrapalha andar)
+        if (I.lastPadClick !== undefined && I.padT - I.lastPadClick < 0.4) { I.pause = true; I.lastPadClick = undefined; }
+        else I.lastPadClick = I.padT;
+        // giro opcional: clique nas bordas esquerda/direita
+        if (FG.save.settings.padTurn && Math.abs(ax) > 0.65 && Math.abs(ay) < 0.5) I.snap = ax > 0 ? -1 : 1;
       }
-      if (touched && !padPress) {
+      // andar: tocar em QUALQUER lugar do touchpad. Centro = para frente; bordas = direção.
+      var mx = 0, my = 0;
+      if (touched) {
         var mag = Math.sqrt(ax * ax + ay * ay);
-        if (mag > 0.2) { var k = Math.min(1, (mag - 0.2) / 0.6) / mag; I.move.set(ax * k, -ay * k); }
+        if (mag < 0.3) { mx = 0; my = 1; }
+        else { mx = ax / mag; my = -ay / mag; if (my > 0.4) { mx *= 0.6; } }
+        var l = Math.sqrt(mx * mx + my * my) || 1; mx /= l; my /= l;
       }
+      // suaviza (o touchpad do Go é ruidoso)
+      I.smx = (I.smx || 0) + (mx - (I.smx || 0)) * Math.min(1, dt * 12);
+      I.smy = (I.smy || 0) + (my - (I.smy || 0)) * Math.min(1, dt * 12);
+      if (Math.abs(I.smx) + Math.abs(I.smy) > 0.05) I.move.set(I.smx, I.smy);
       I.sprint = trig;
     } else {
       // navegador

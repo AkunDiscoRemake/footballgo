@@ -62,7 +62,7 @@
       });
       ui.btn(40, 560, 300, 54, 'Créditos (VRFS)', function () { ui.open(S.credits()); }, { size: 22 });
       c.fillStyle = 'rgba(255,255,255,0.45)'; c.font = '18px Arial'; c.textAlign = 'right';
-      c.fillText(FG.inXR ? 'Gatilho: selecionar · Touchpad centro: pausa' : 'Clique para selecionar · Esc: pausa', 984, 590); c.textAlign = 'left';
+      c.fillText(FG.inXR ? 'Gatilho: selecionar · Clique duplo no touchpad: pausa' : 'Clique para selecionar · Esc: pausa', 984, 590); c.textAlign = 'left';
     };
   };
 
@@ -414,14 +414,44 @@
         if (note) { c.fillStyle = 'rgba(255,255,255,0.4)'; c.font = '15px Arial'; c.fillText(note, x, yy + 48); }
       }
       row('Volume', [[0, 'Mudo'], [0.4, 'Baixo'], [0.8, 'Médio'], [1, 'Alto']], st.volume, function (v) { st.volume = v; FG.audio.setVolume(v); }, y);
-      row('Vinheta de conforto', [[true, 'Ligada'], [false, 'Desligada']], st.vignette, function (v) { st.vignette = v; }, y + 64, 'reduz enjoo ao andar');
-      row('Giro (touchpad)', [[30, '30°'], [45, '45°'], [90, '90°']], st.snap, function (v) { st.snap = v; }, y + 128);
-      row('Linha de impedimento', [[true, 'Mostrar'], [false, 'Esconder']], st.offsideHelp, function (v) { st.offsideHelp = v; }, y + 192, 'ajuda didática');
-      row('Pé que chuta', [[false, 'Direito'], [true, 'Esquerdo']], st.leftFoot, function (v) { st.leftFoot = v; }, y + 256);
-      row('Gráficos', [['auto', 'Auto'], ['low', 'Leve (Go)'], ['high', 'Alta (PC)']], st.quality, function (v) { st.quality = v; ui.state.reload = true; }, y + 320, 'recarrega a página');
-      row('Horário', [[true, 'Noite'], [false, 'Dia']], st.night, function (v) { st.night = v; ui.state.reload = true; }, y + 384, 'recarrega a página');
+      row('Vinheta de conforto', [[true, 'Ligada'], [false, 'Desligada']], st.vignette, function (v) { st.vignette = v; }, y + 58, 'reduz enjoo ao andar');
+      row('Girar no touchpad', [[0, 'Desligado'], [30, '30°'], [45, '45°'], [90, '90°']], st.padTurn ? st.snap : 0, function (v) { st.padTurn = v > 0; if (v) st.snap = v; }, y + 116, 'clique nas bordas esq./dir.');
+      row('Linha de impedimento', [[true, 'Mostrar'], [false, 'Esconder']], st.offsideHelp, function (v) { st.offsideHelp = v; }, y + 174, 'ajuda didática');
+      row('Pé que chuta', [[false, 'Direito'], [true, 'Esquerdo']], st.leftFoot, function (v) { st.leftFoot = v; }, y + 232);
+      row('Gráficos', [['auto', 'Auto'], ['low', 'Leve (Go)'], ['high', 'Alta (PC)']], st.quality, function (v) { st.quality = v; ui.state.reload = true; }, y + 290, 'recarrega a página');
+      row('Horário', [[true, 'Noite'], [false, 'Dia']], st.night, function (v) { st.night = v; ui.state.reload = true; }, y + 348, 'recarrega a página');
       backBtn(ui);
+      ui.btn(240, 560, 260, 54, '🎮 Testar controle', function () { ui.open(S.padTest(), true); }, { size: 20 });
       if (ui.state.reload) ui.btn(704, 560, 280, 54, 'Aplicar e recarregar', function () { location.reload(); }, { primary: true, size: 20 });
+    };
+  };
+
+  /* ---------- Teste do controle ---------- */
+  S.padTest = function () {
+    return function (c, ui) {
+      var I = FG.input, d = I.debug;
+      ui.title('Testar controle', 'Toque, aperte e mova o touchpad para ver como o jogo entende');
+      // touchpad desenhado
+      var cx = 200, cy = 330, R = 150;
+      c.beginPath(); c.arc(cx, cy, R, 0, 7); c.fillStyle = 'rgba(255,255,255,0.08)'; c.fill(); c.strokeStyle = '#7dffb3'; c.lineWidth = 3; c.stroke();
+      c.beginPath(); c.arc(cx, cy, R * 0.3, 0, 7); c.strokeStyle = 'rgba(255,255,255,0.25)'; c.stroke();
+      if (d) {
+        var ax = parseFloat(d.axes.split(' ')[0]) || 0, ay = parseFloat(d.axes.split(' ')[1]) || 0;
+        c.beginPath(); c.arc(cx + ax * R, cy + ay * R, 16, 0, 7); c.fillStyle = '#ffd23f'; c.fill();
+      }
+      // vetor de movimento
+      c.strokeStyle = '#35d07f'; c.lineWidth = 8; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + I.move.x * R * 0.8, cy - I.move.y * R * 0.8); c.stroke();
+      var y = 160;
+      y = ui.text('Andando: ' + (I.move.lengthSq() > 0.01 ? 'SIM' : 'não'), 420, y, { size: 26, bold: true, color: I.move.lengthSq() > 0.01 ? '#35d07f' : '#ff9a7a' });
+      y = ui.text('Gatilho (correr/clicar): ' + (I.trigger ? 'APERTADO' : 'solto'), 420, y + 6, { size: 24 });
+      y = ui.text('Clique duplo no touchpad = pausa', 420, y + 6, { size: 22, color: '#9fd8b4' });
+      if (d) {
+        y = ui.text('Controle: ' + d.id + ' (' + (d.mapping || 'sem mapeamento') + ')', 420, y + 20, { size: 18, wrap: 560, color: 'rgba(255,255,255,0.6)' });
+        y = ui.text('Botões: ' + d.buttons + '   Eixos: ' + d.axes, 420, y, { size: 18, color: 'rgba(255,255,255,0.6)' });
+      } else y = ui.text(FG.inXR ? 'Nenhum controle detectado.' : 'Entre em VR para testar o controle.', 420, y + 20, { size: 20, color: '#ff9a7a' });
+      ui.text('Toque em qualquer lugar: anda. Centro = para frente; bordas = naquela direção.', 60, 515, { size: 20, wrap: 900 });
+      ui.btn(40, 560, 180, 54, '◀ Voltar', function () { ui.open(S.options(), true); });
+      ui.dirty = true; // atualiza ao vivo
     };
   };
 

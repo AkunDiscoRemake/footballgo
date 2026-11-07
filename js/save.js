@@ -13,7 +13,7 @@
       club: null,
       league: null,
       friendClubs: [],
-      settings: { quality: 'auto', volume: 0.8, vignette: true, snap: 45, offsideHelp: true, night: true, difficulty: 1, size: 7, minutes: 3, team: 'bra', opp: 'arg', leftFoot: false }
+      settings: { quality: 'auto', volume: 0.8, vignette: true, snap: 45, offsideHelp: true, padTurn: false, night: true, difficulty: 1, size: 7, minutes: 3, team: 'bra', opp: 'arg', leftFoot: false }
     };
   }
   function load() {
