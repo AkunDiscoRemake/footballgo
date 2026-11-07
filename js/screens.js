@@ -444,6 +444,7 @@
       var y = 160;
       y = ui.text('Andando: ' + (I.move.lengthSq() > 0.01 ? 'SIM' : 'não'), 420, y, { size: 26, bold: true, color: I.move.lengthSq() > 0.01 ? '#35d07f' : '#ff9a7a' });
       y = ui.text('Gatilho (correr/clicar): ' + (I.trigger ? 'APERTADO' : 'solto'), 420, y + 6, { size: 24 });
+      y = ui.text('FPS: ' + FG.fps + (FG.fps && FG.fps < 50 ? '  (baixo — use Gráficos: Leve)' : ''), 420, y + 6, { size: 22, color: FG.fps && FG.fps < 50 ? '#ff9a7a' : '#9fd8b4' });
       y = ui.text('Clique duplo no touchpad = pausa', 420, y + 6, { size: 22, color: '#9fd8b4' });
       if (d) {
         y = ui.text('Controle: ' + d.id + ' (' + (d.mapping || 'sem mapeamento') + ')', 420, y + 20, { size: 18, wrap: 560, color: 'rgba(255,255,255,0.6)' });

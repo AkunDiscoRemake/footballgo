@@ -73,12 +73,13 @@
     if (H.canMove && (input.move.x || input.move.y)) {
       var fx = Math.sin(yaw), fz = Math.cos(yaw), rx = -Math.cos(yaw), rz = Math.sin(yaw); // direita = (-cos, sin)
       var sprint = input.sprint && H.stamina > 0.05;
-      var maxS = (sprint ? 7.6 : 5.0) * bfx.speed;
+      var maxS = (sprint ? 8.0 : 5.8) * bfx.speed;
       target.set((fx * input.move.y + rx * input.move.x) * maxS, 0, (fz * input.move.y + rz * input.move.x) * maxS);
       if (sprint) H.stamina = Math.max(0, H.stamina - dt * 0.09);
     }
     if (!(input.sprint && (input.move.x || input.move.y))) H.stamina = Math.min(1, H.stamina + dt * 0.06);
-    var acc = 1 - Math.exp(-dt * 5);
+    // aceleração rápida (~0,2 s até a velocidade máxima) para resposta imediata no touchpad
+    var acc = 1 - Math.exp(-dt * (target.x || target.z ? 16 : 11));
     H.vel.x += (target.x - H.vel.x) * acc; H.vel.z += (target.z - H.vel.z) * acc;
     H.pos.x += H.vel.x * dt; H.pos.z += H.vel.z * dt;
     var lim = ctx.bounds || { x: P.HL + 4, z: P.HW + 3.5 };

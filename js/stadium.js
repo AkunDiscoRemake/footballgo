@@ -272,7 +272,7 @@
   };
 
   function buildCrowd(S, seatPos, hi) {
-    var density = hi ? 0.92 : 0.7, spacing = hi ? 0.62 : 0.78;
+    var density = hi ? 0.92 : 0.6, spacing = hi ? 0.62 : 0.9;
     var offs = [], misc = [], cols = [];
     seatPos.forEach(function (sp) {
       var sd = sp.sd, n = Math.floor(sd.len / spacing);

@@ -14,7 +14,7 @@
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType('local');
-  if (renderer.xr.setFramebufferScaleFactor) renderer.xr.setFramebufferScaleFactor(FG.quality === 'high' ? 1.0 : 0.9);
+  if (renderer.xr.setFramebufferScaleFactor) renderer.xr.setFramebufferScaleFactor(FG.quality === 'high' ? 1.0 : 0.75);
   document.body.appendChild(renderer.domElement);
   FG.maxAniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 
@@ -128,6 +128,8 @@
       xrSession = s;
       s.addEventListener('end', function () { xrSession = null; FG.inXR = false; overlay.classList.remove('hidden'); btnVR.textContent = 'Entrar em VR'; });
       renderer.xr.setSession(s);
+      // foveação fixa: renderiza as bordas com menos detalhe (ganho grande de FPS no Go)
+      try { var bl = s.renderState.baseLayer; if (bl && 'fixedFoveation' in bl) bl.fixedFoveation = FG.quality === 'high' ? 0.5 : 1; } catch (e) { }
       FG.inXR = true; overlay.classList.add('hidden');
       setTimeout(function () { if (ui.visible) ui.place(); }, 400);
     }).catch(function (e) { note.textContent = 'Não foi possível iniciar a VR: ' + e.message; });
@@ -162,9 +164,10 @@
   app.toMenu();
   document.getElementById('loading').classList.add('hidden');
 
-  var clock = new THREE.Clock(), time = 0;
+  var clock = new THREE.Clock(), time = 0, fpsN = 0, fpsT = 0; FG.fps = 0;
   renderer.setAnimationLoop(function () {
-    var dt = Math.min(0.05, clock.getDelta());
+    var dt = Math.min(0.1, clock.getDelta());
+    fpsN++; fpsT += dt; if (fpsT >= 1) { FG.fps = Math.round(fpsN / fpsT); fpsN = 0; fpsT = 0; }
     time += dt; FG.now = time;
     if (!FG.inXR) { camera.rotation.set(input.pitch, input.yaw, 0); }
     input.showModels = ui.visible;

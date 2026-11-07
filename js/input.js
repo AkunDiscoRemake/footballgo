@@ -127,8 +127,8 @@
         var l = Math.sqrt(mx * mx + my * my) || 1; mx /= l; my /= l;
       }
       // suaviza (o touchpad do Go é ruidoso)
-      I.smx = (I.smx || 0) + (mx - (I.smx || 0)) * Math.min(1, dt * 12);
-      I.smy = (I.smy || 0) + (my - (I.smy || 0)) * Math.min(1, dt * 12);
+      I.smx = (I.smx || 0) + (mx - (I.smx || 0)) * Math.min(1, dt * 35);
+      I.smy = (I.smy || 0) + (my - (I.smy || 0)) * Math.min(1, dt * 35);
       if (Math.abs(I.smx) + Math.abs(I.smy) > 0.05) I.move.set(I.smx, I.smy);
       I.sprint = trig;
     } else {
