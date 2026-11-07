@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b3d1e">
+<title>Football Go: Play in VR without paying a lot!</title>
+<meta name="description" content="Football Go - futebol em realidade virtual (WebXR) para Oculus Go e outros headsets. Jogo educativo de esporte inspirado no VRFS.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="overlay">
+  <div class="card">
+    <div class="logo"><span class="ball">⚽</span> Football <b>Go</b></div>
+    <div class="tag">Play in VR without paying a lot!</div>
+    <p class="lead">Futebol em realidade virtual feito para o <b>Oculus Go</b> (controle 3DoF), Quest e navegador.
+      Controle o seu pé apontando o controle, ande com o touchpad, aprenda as regras e jogue partidas completas num estádio lotado.</p>
+    <div class="buttons">
+      <button id="btnVR" class="primary" disabled>Verificando suporte a VR…</button>
+      <button id="btnFlat">Jogar no navegador (teclado + mouse)</button>
+    </div>
+    <div id="vrNote" class="note"></div>
+    <details>
+      <summary>Como jogar</summary>
+      <div class="howto">
+        <h3>Oculus Go / headset 3DoF</h3>
+        <ul>
+          <li><b>Apontar o controle</b>: posiciona o seu pé. Aponte para baixo = pé perto do corpo; aponte para frente = pé lá na frente; aponte para cima = levanta o pé.</li>
+          <li><b>Chutar</b>: dê um "tapa" rápido com o pulso (de baixo para cima) — quanto mais rápido, mais forte.</li>
+          <li><b>Touchpad (tocar)</b>: andar na direção para onde você olha.</li>
+          <li><b>Gatilho</b>: correr (sprint) / clicar nos menus.</li>
+          <li><b>Clicar no centro do touchpad</b>: pausa. <b>Clicar nas bordas esquerda/direita</b>: girar 45°.</li>
+          <li><b>Cabecear</b>: a bola bate na sua cabeça de verdade — mexa a cabeça!</li>
+        </ul>
+        <h3>Navegador</h3>
+        <ul>
+          <li><b>WASD</b> andar · <b>Shift</b> correr · <b>Setas / Q E</b> olhar e girar · <b>botão direito + arrastar</b> olhar</li>
+          <li><b>Mouse</b> posiciona o pé (como o controle) · mova o mouse rápido para cima para chutar</li>
+          <li><b>Espaço</b> chute assistido · <b>Esc / P</b> pausa · <b>Clique</b> nos menus</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary>Importar clube de um amigo</summary>
+      <div class="howto">
+        <p>Cole aqui o <b>código do clube</b> que seu amigo compartilhou (aparece na tela Clubes do jogo dele). O clube vira adversário na sua liga.</p>
+        <textarea id="importCode" rows="3" placeholder="FGC1:..."></textarea>
+        <button id="btnImport">Importar clube</button>
+        <div id="importMsg" class="note"></div>
+        <p>Seu código de clube: <code id="myCode">—</code> <button id="btnCopy" class="small">Copiar</button></p>
+      </div>
+    </details>
+    <p class="credits">Inspirado no <b>VRFS</b> (VR Football Simulator) — todos os créditos pela ideia de controlar o pé em VR vão para o VRFS e seus criadores.
+      Football Go é um projeto de fã independente, gratuito e sem afiliação.</p>
+  </div>
+</div>
+<div id="loading">Carregando estádio…</div>
+
+<script src="lib/webxr-polyfill.min.js"></script>
+<script>
+  // Polyfill WebVR 1.1 -> WebXR para navegadores antigos (ex.: Oculus Browser no Go)
+  try { if (!('xr' in navigator)) { new WebXRPolyfill(); } } catch (e) { console.warn('polyfill', e); }
+</script>
+<script src="lib/three.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/save.js"></script>
+<script src="js/textures.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/stadium.js"></script>
+<script src="js/player.js"></script>
+<script src="js/ball.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/input.js"></script>
+<script src="js/human.js"></script>
+<script src="js/match.js"></script>
+<script src="js/modes.js"></script>
+<script src="js/screens.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
