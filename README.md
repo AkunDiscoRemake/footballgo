@@ -47,8 +47,9 @@ python3 -m http.server 8000
 WebXR needs HTTPS (or localhost). GitHub Pages already serves over HTTPS.
 
 ## 🌐 GitHub Pages
-The `.github/workflows/pages.yml` workflow publishes the site automatically on every push.
-If Pages isn't enabled yet: **Settings → Pages → Source: GitHub Actions**.
+The site is static and publishes straight from the branch (no Actions needed):
+**Settings → Pages → Build and deployment → Source: "Deploy from a branch" → choose the branch and the `/ (root)` folder → Save.**
+After 1–2 minutes it's live at `https://<user>.github.io/footballgo/`.
 
 ## 🛠 Technology
 - [three.js r128](https://threejs.org) (MIT), the classic non-module build, compatible with the Oculus Go's Oculus Browser
